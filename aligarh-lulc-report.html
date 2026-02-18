@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LULC &amp; NDVI Analysis Report | Aligarh District</title>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+    .report-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 5%;
+    }
+    .report-section {
+        margin-bottom: 40px;
+    }
+    .report-section h2 {
+        color: var(--accent-gold);
+        font-size: 1.6rem;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(197,160,89,0.3);
+        padding-bottom: 10px;
+    }
+    .report-section h3 {
+        color: #fff;
+        font-size: 1.2rem;
+        margin: 20px 0 10px;
+    }
+    .report-section p, .report-section li {
+        color: var(--text-light);
+        line-height: 1.8;
+        font-size: 0.95rem;
+    }
+    .report-section ul {
+        padding-left: 20px;
+    }
+    .report-section li {
+        margin-bottom: 8px;
+    }
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    .report-table th, .report-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border: 1px solid rgba(197,160,89,0.2);
+        font-size: 0.9rem;
+    }
+    .report-table th {
+        background: rgba(197,160,89,0.1);
+        color: var(--accent-gold);
+        font-weight: 600;
+    }
+    .report-table td {
+        color: var(--text-light);
+    }
+    .print-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: var(--accent-gold);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: 0.3s ease;
+    }
+    .print-btn:hover {
+        opacity: 0.85;
+    }
+    @media print {
+        .navbar, footer, .print-btn { display: none; }
+        body { background: #fff; color: #000; }
+        .report-section h2 { color: #333; border-color: #ccc; }
+        .report-section h3 { color: #333; }
+        .report-section p, .report-section li { color: #333; }
+        .report-table th { background: #f0f0f0; color: #333; }
+        .report-table td { color: #333; }
+        .report-table th, .report-table td { border-color: #ccc; }
+        .page-header { background: #fff; }
+        .page-header h1 { color: #333; }
+        .page-header p { color: #666; }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="lulc-data.html">LULC Data</a>
+            <a href="team.html">Team</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
+</header>
+
+<!-- ================= PAGE HEADER ================= -->
+<section class="page-header" data-aos="fade-down">
+    <h1>LULC &amp; NDVI Analysis Report</h1>
+    <p>Aligarh District, Uttar Pradesh &mdash; Landsat 9 OLI-2</p>
+</section>
+
+<div class="report-container">
+
+    <div style="text-align:center; margin-bottom:40px;">
+        <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>1. Introduction</h2>
+        <p>
+            This report presents a comprehensive Land Use Land Cover (LULC) classification and Normalized Difference
+            Vegetation Index (NDVI) analysis for Aligarh District, Uttar Pradesh, India. The study leverages
+            multispectral imagery from the Landsat 9 OLI-2 sensor with a spatial resolution of 30 meters per pixel.
+        </p>
+        <p>
+            The primary objectives are to quantify the spatial distribution of major land cover classes,
+            assess vegetation health using NDVI, and provide actionable insights for urban planning,
+            environmental monitoring, and agricultural sustainability.
+        </p>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>2. Study Area</h2>
+        <p>
+            Aligarh District is situated in western Uttar Pradesh at approximately
+            <strong>27.88&deg;N, 78.08&deg;E</strong>, covering an area of roughly <strong>3,800 km&sup2;</strong>.
+            The district is characterised by a semi-arid to sub-humid climate, with the Upper Ganges Canal
+            system providing the principal irrigation network. Key geographic features include extensive
+            alluvial floodplains, canal-fed agricultural tracts, and the rapidly expanding Aligarh urban centre.
+        </p>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>3. Methodology</h2>
+        <h3>3.1 Data Source</h3>
+        <p>
+            Landsat 9 OLI-2 multispectral imagery was obtained from the USGS EarthExplorer archive.
+            Bands 2&ndash;7 (Blue, Green, Red, NIR, SWIR-1, SWIR-2) were used for classification,
+            while Bands 4 (Red) and 5 (NIR) were used for NDVI computation.
+        </p>
+
+        <h3>3.2 NDVI Computation</h3>
+        <p>
+            The NDVI was calculated using the standard formula:
+        </p>
+        <p style="text-align:center; font-family:'Courier New', monospace; color:var(--accent-gold); font-size:1.1rem; margin:15px 0;">
+            NDVI = (NIR &minus; Red) / (NIR + Red)
+        </p>
+        <p>
+            NDVI values range from &minus;1.0 to +1.0. Dense healthy vegetation yields high positive values
+            (0.6&ndash;0.9), while water bodies return negative values and bare soil/built-up areas
+            fall between 0.0 and 0.2.
+        </p>
+
+        <h3>3.3 LULC Classification</h3>
+        <p>
+            A supervised classification approach was applied using maximum-likelihood estimation with four
+            primary land cover classes: Dense Vegetation, Moderate Vegetation, Water Bodies, and Built-up / Bare Soil.
+        </p>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>4. Results</h2>
+
+        <h3>4.1 Land Cover Distribution</h3>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Land Cover Class</th>
+                    <th>Area (km&sup2;)</th>
+                    <th>Percentage</th>
+                    <th>NDVI Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dense Vegetation</td>
+                    <td>1,082.4</td>
+                    <td>28.5%</td>
+                    <td>0.6 &ndash; 0.9</td>
+                </tr>
+                <tr>
+                    <td>Moderate Vegetation</td>
+                    <td>1,216.8</td>
+                    <td>32.0%</td>
+                    <td>0.3 &ndash; 0.6</td>
+                </tr>
+                <tr>
+                    <td>Water Bodies</td>
+                    <td>190.0</td>
+                    <td>5.0%</td>
+                    <td>Below 0.0</td>
+                </tr>
+                <tr>
+                    <td>Built-up / Bare Soil</td>
+                    <td>1,311.6</td>
+                    <td>34.5%</td>
+                    <td>0.0 &ndash; 0.2</td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>3,800.8</strong></td>
+                    <td><strong>100.0%</strong></td>
+                    <td>&mdash;</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.2 Key Findings</h3>
+        <ul>
+            <li><strong>Built-up / Bare Soil (34.5%)</strong> constitutes the largest class, reflecting significant urbanisation and exposed agricultural fallow around Aligarh city and surrounding tehsils.</li>
+            <li><strong>Moderate Vegetation (32.0%)</strong> dominates the central floodplain area, corresponding to seasonal cropping patterns with wheat and sugarcane as primary crops.</li>
+            <li><strong>Dense Vegetation (28.5%)</strong> is concentrated in the canal-irrigated northern belt, where perennial orchards and well-irrigated croplands maintain high canopy density.</li>
+            <li><strong>Water Bodies (5.0%)</strong> account for the Upper Ganges Canal network and scattered reservoirs and ponds used for irrigation and aquaculture.</li>
+        </ul>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>5. Applications</h2>
+        <ul>
+            <li><strong>Environmental Monitoring:</strong> NDVI time-series analysis enables early detection of vegetation stress, deforestation, and wetland degradation across the district.</li>
+            <li><strong>Urban Planning:</strong> The 34.5% built-up footprint provides spatial evidence for zoning decisions, infrastructure planning, and green-space preservation policies.</li>
+            <li><strong>Agriculture &amp; Sustainability:</strong> NDVI-based crop health assessments support precision irrigation scheduling and food security planning for the canal-fed agricultural belt.</li>
+        </ul>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>6. Conclusion</h2>
+        <p>
+            The LULC and NDVI analysis of Aligarh District reveals a landscape undergoing significant
+            land-use transition, with built-up and bare soil areas occupying the largest share of the
+            district. The presence of healthy vegetation in the canal-irrigated northern region demonstrates
+            the critical role of irrigation infrastructure in maintaining agricultural productivity.
+            Continued satellite monitoring is recommended to track urban expansion trends and assess
+            their impact on agricultural land and water resources.
+        </p>
+    </div>
+
+    <div class="report-section" data-aos="fade-up">
+        <h2>7. References</h2>
+        <ul>
+            <li>USGS Landsat 9 OLI-2 Data &mdash; <em>earthexplorer.usgs.gov</em></li>
+            <li>Rouse, J.W. et al. (1974). Monitoring vegetation systems in the Great Plains with ERTS. <em>NASA SP-351</em>, 309&ndash;317.</li>
+            <li>Survey of India &mdash; Aligarh District Administrative Boundary</li>
+        </ul>
+    </div>
+
+    <div style="text-align:center; margin:40px 0;">
+        <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+        <a href="analysis.html" style="display:inline-block; margin-left:15px; color:var(--accent-gold); text-decoration:none; padding:12px 20px;">&larr; Back to Analysis</a>
+    </div>
+
+</div>
+
+<footer>
+    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+});
+</script>
+
+</body>
+</html>

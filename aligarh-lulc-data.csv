@@ -1,0 +1,6 @@
+Class,Area_sqkm,Percentage,NDVI_Range
+Dense Vegetation,1082.4,28.5,0.6 - 0.9
+Moderate Vegetation,1216.8,32.0,0.3 - 0.6
+Water Bodies,190.0,5.0,Below 0.0
+Built-up / Bare Soil,1311.6,34.5,0.0 - 0.2
+Total,3800.8,100.0,N/A

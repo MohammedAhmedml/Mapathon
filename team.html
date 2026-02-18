@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team | Aligarh Geospatial Project</title>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="lulc-data.html">LULC Data</a>
+            <a href="team.html" class="active">Team</a>
+            <a href="#" class="btn login-btn" onclick="openModal('loginModal')">Login</a>
+            <a href="#" class="btn signup-btn" onclick="openModal('signupModal')">Sign Up</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
+</header>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('loginModal')">&#10006;</span>
+        <h2>Login</h2>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+        <div class="switch-link" onclick="switchModal('loginModal','signupModal')">
+            Don't have an account? Sign Up
+        </div>
+    </div>
+</div>
+
+<!-- ================= SIGNUP MODAL ================= -->
+<div class="modal" id="signupModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('signupModal')">&#10006;</span>
+        <h2>Sign Up</h2>
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Create Account</button>
+        <div class="switch-link" onclick="switchModal('signupModal','loginModal')">
+            Already have an account? Login
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE HEADER ================= -->
+<section class="page-header" data-aos="fade-down">
+    <h1>Project Team</h1>
+    <p>The people behind the Aligarh Geospatial Analysis</p>
+</section>
+
+<!-- ================= TEAM SECTION ================= -->
+<section class="team-section" data-aos="fade-up">
+    <div class="team-grid">
+        <div class="member-card">
+            <h4>Mohammed Ahmed Iqbal</h4>
+            <p>Geospatial Developer | GIS & Remote Sensing</p>
+        </div>
+
+        <div class="member-card">
+            <h4>Khagesh Kumar Sharma</h4>
+            <p>Website Developer</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+
+/* ================= HAMBURGER MENU ================= */
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+});
+
+/* ================= MODAL SYSTEM ================= */
+function openModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+function switchModal(closeId, openId) {
+    closeModal(closeId);
+    openModal(openId);
+}
+
+window.addEventListener("click", function(e) {
+    document.querySelectorAll(".modal").forEach(modal => {
+        if (e.target === modal) {
+            modal.classList.remove("active");
+        }
+    });
+});
+
+/* ================= AUTH SYSTEM ================= */
+const signupBtn = document.querySelector("#signupModal button");
+const loginBtn = document.querySelector("#loginModal button");
+
+signupBtn.addEventListener("click", () => {
+    const name = document.querySelector("#signupModal input[type='text']").value;
+    const email = document.querySelector("#signupModal input[type='email']").value;
+    const password = document.querySelector("#signupModal input[type='password']").value;
+
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const user = { name, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created successfully!");
+    closeModal("signupModal");
+});
+
+loginBtn.addEventListener("click", () => {
+    const email = document.querySelector("#loginModal input[type='email']").value;
+    const password = document.querySelector("#loginModal input[type='password']").value;
+
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
+        alert("Invalid credentials");
+        return;
+    }
+
+    alert("Welcome " + savedUser.name);
+    closeModal("loginModal");
+});
+</script>
+
+</body>
+</html>

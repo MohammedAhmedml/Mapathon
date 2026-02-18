@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LULC Data | Aligarh Geospatial Project</title>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="lulc-data.html" class="active">LULC Data</a>
+            <a href="team.html">Team</a>
+            <a href="#" class="btn login-btn" onclick="openModal('loginModal')">Login</a>
+            <a href="#" class="btn signup-btn" onclick="openModal('signupModal')">Sign Up</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
+</header>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('loginModal')">&#10006;</span>
+        <h2>Login</h2>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+        <div class="switch-link" onclick="switchModal('loginModal','signupModal')">
+            Don't have an account? Sign Up
+        </div>
+    </div>
+</div>
+
+<!-- ================= SIGNUP MODAL ================= -->
+<div class="modal" id="signupModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('signupModal')">&#10006;</span>
+        <h2>Sign Up</h2>
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Create Account</button>
+        <div class="switch-link" onclick="switchModal('signupModal','loginModal')">
+            Already have an account? Login
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE HEADER ================= -->
+<section class="page-header" data-aos="fade-down">
+    <h1>LULC Change Detection</h1>
+    <p>Land Use Land Cover Trends (2000 - 2025)</p>
+</section>
+
+<!-- ================= CHART SECTION ================= -->
+<section style="padding: 40px 5% 80px;">
+    <div class="chart-section" data-aos="fade-up">
+        <h3>LULC Change Detection (2000 - 2025)</h3>
+        <canvas id="lulcChart"></canvas>
+    </div>
+
+    <!-- ================= DATA GRID ================= -->
+    <div class="data-grid">
+        <div class="data-card" data-aos="fade-up">
+            <p>Urban Growth</p>
+            <h3>+22%</h3>
+            <p>From 12% to 34% (2000-2025)</p>
+        </div>
+
+        <div class="data-card" data-aos="fade-up" data-aos-delay="100">
+            <p>Agriculture Decline</p>
+            <h3>-18%</h3>
+            <p>From 60% to 42% (2000-2025)</p>
+        </div>
+
+        <div class="data-card" data-aos="fade-up" data-aos-delay="200">
+            <p>Forest Change</p>
+            <h3>-4%</h3>
+            <p>From 28% to 24% (2000-2025)</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+
+/* ================= HAMBURGER MENU ================= */
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+});
+
+/* ================= MODAL SYSTEM ================= */
+function openModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+function switchModal(closeId, openId) {
+    closeModal(closeId);
+    openModal(openId);
+}
+
+window.addEventListener("click", function(e) {
+    document.querySelectorAll(".modal").forEach(modal => {
+        if (e.target === modal) {
+            modal.classList.remove("active");
+        }
+    });
+});
+
+/* ================= AUTH SYSTEM ================= */
+const signupBtn = document.querySelector("#signupModal button");
+const loginBtn = document.querySelector("#loginModal button");
+
+signupBtn.addEventListener("click", () => {
+    const name = document.querySelector("#signupModal input[type='text']").value;
+    const email = document.querySelector("#signupModal input[type='email']").value;
+    const password = document.querySelector("#signupModal input[type='password']").value;
+
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const user = { name, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created successfully!");
+    closeModal("signupModal");
+});
+
+loginBtn.addEventListener("click", () => {
+    const email = document.querySelector("#loginModal input[type='email']").value;
+    const password = document.querySelector("#loginModal input[type='password']").value;
+
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
+        alert("Invalid credentials");
+        return;
+    }
+
+    alert("Welcome " + savedUser.name);
+    closeModal("loginModal");
+});
+
+/* ================= LULC CHART ================= */
+async function loadLULCData() {
+    const data = {
+        years: ["2000", "2010", "2020", "2025"],
+        urban: [12, 18, 26, 34],
+        agriculture: [60, 55, 48, 42],
+        forest: [28, 27, 26, 24]
+    };
+
+    createChart(data);
+}
+
+function createChart(data) {
+    const ctx = document.getElementById("lulcChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: data.years,
+            datasets: [
+                {
+                    label: "Urban (%)",
+                    data: data.urban,
+                    borderColor: "#c5a059",
+                    backgroundColor: "rgba(197,160,89,0.2)",
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: "Agriculture (%)",
+                    data: data.agriculture,
+                    borderColor: "#4ade80",
+                    backgroundColor: "rgba(74,222,128,0.2)",
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: "Forest (%)",
+                    data: data.forest,
+                    borderColor: "#22c55e",
+                    backgroundColor: "rgba(34,197,94,0.2)",
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#fff",
+                        font: { size: 13 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + '%';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: "#fff" },
+                    grid: { color: "rgba(255,255,255,0.05)" }
+                },
+                y: {
+                    ticks: {
+                        color: "#fff",
+                        callback: function(value) { return value + '%'; }
+                    },
+                    grid: { color: "rgba(255,255,255,0.05)" }
+                }
+            }
+        }
+    });
+}
+
+loadLULCData();
+</script>
+
+</body>
+</html>

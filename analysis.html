@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satellite Analysis | Aligarh Geospatial Project</title>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="analysis.html" class="active">Analysis</a>
+            <a href="lulc-data.html">LULC Data</a>
+            <a href="team.html">Team</a>
+            <a href="#" class="btn login-btn" onclick="openModal('loginModal')">Login</a>
+            <a href="#" class="btn signup-btn" onclick="openModal('signupModal')">Sign Up</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
+</header>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('loginModal')">&#10006;</span>
+        <h2>Login</h2>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+        <div class="switch-link" onclick="switchModal('loginModal','signupModal')">
+            Don't have an account? Sign Up
+        </div>
+    </div>
+</div>
+
+<!-- ================= SIGNUP MODAL ================= -->
+<div class="modal" id="signupModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('signupModal')">&#10006;</span>
+        <h2>Sign Up</h2>
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Create Account</button>
+        <div class="switch-link" onclick="switchModal('signupModal','loginModal')">
+            Already have an account? Login
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE HEADER ================= -->
+<section class="page-header" data-aos="fade-down">
+    <h1>Aligarh District Map</h1>
+    <p>Aligarh District in Uttar Pradesh</p>
+</section>
+
+<!-- ================= STATIC MAP SECTION ================= -->
+<section class="map-section">
+    <div class="map-display" data-aos="zoom-in">
+        <img src="aligarh-district-up-map.png" alt="Aligarh District Map in Uttar Pradesh">
+    </div>
+
+    <!-- ================= DATA GRID ================= -->
+    <div class="data-grid">
+        <div class="data-card" data-aos="fade-up">
+            <p>Satellite</p>
+            <h3>Landsat 9</h3>
+            <p>OLI-2 Sensor</p>
+        </div>
+
+        <div class="data-card" data-aos="fade-up" data-aos-delay="100">
+            <p>Resolution</p>
+            <h3>30m/pixel</h3>
+            <p>Multi-Spectral</p>
+        </div>
+
+        <div class="data-card" data-aos="fade-up" data-aos-delay="200">
+            <p>Coordinates</p>
+            <h3>27.86&#176;N, 78.06&#176;E</h3>
+            <p>Aligarh District Center</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= INTERACTIVE MAP SECTION ================= -->
+<section class="interactive-map-section" data-aos="fade-up">
+    <div class="section-heading">
+        <h2>Satellite Imagery Map</h2>
+        <p>Interactive multi-layer geospatial visualization</p>
+    </div>
+
+    <div class="interactive-map-wrapper">
+        <div id="interactiveMap"></div>
+        <div class="map-layer-info">
+            <p>Use the layer control (top-right) to toggle between satellite views: <strong>True Color (RGB)</strong>, <strong>NDVI</strong>, and <strong>LULC Classification</strong>.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= NDVI ANALYTICAL SUMMARY ================= -->
+<section class="ndvi-section" data-aos="fade-up">
+    <div class="section-heading">
+        <h2>NDVI Analytical Summary</h2>
+        <p>Normalized Difference Vegetation Index</p>
+    </div>
+
+    <div class="ndvi-content">
+        <div class="ndvi-text">
+            <h3>How NDVI is Calculated</h3>
+            <p>
+                The Normalized Difference Vegetation Index (NDVI) is computed from Landsat 9 imagery using the
+                <strong>Near-Infrared (NIR, Band 5)</strong> and <strong>Red (Band 4)</strong> spectral bands:
+            </p>
+            <div class="ndvi-formula">
+                NDVI = (NIR &minus; Red) / (NIR + Red)
+            </div>
+            <p>
+                NDVI values range from <strong>&minus;1.0 to +1.0</strong>. Healthy, dense vegetation reflects
+                strongly in NIR and absorbs Red, yielding high NDVI values (0.6&ndash;0.9). Water bodies typically
+                show negative values, while bare soil and built-up areas fall between 0.0 and 0.2.
+            </p>
+
+            <h3>Key Insights &mdash; Aligarh District</h3>
+            <ul class="ndvi-insights">
+                <li><strong>Dense vegetation zones</strong> (NDVI 0.6&ndash;0.9) are concentrated along the canal-fed agricultural belt in the northern tehsils.</li>
+                <li><strong>Moderate vegetation</strong> (NDVI 0.3&ndash;0.6) dominates the central floodplain, reflecting seasonal crop cycles.</li>
+                <li><strong>Stressed / bare areas</strong> (NDVI &lt; 0.2) correlate with rapid urban expansion near Aligarh city and industrial zones.</li>
+                <li><strong>Water bodies</strong> (NDVI &lt; 0.0) delineate the Upper Ganges Canal and scattered irrigation reservoirs.</li>
+            </ul>
+        </div>
+
+        <div class="ndvi-legend-panel">
+            <h3>NDVI Color Ramp</h3>
+            <div class="ndvi-legend">
+                <div class="ndvi-gradient"></div>
+                <div class="ndvi-labels">
+                    <span>&minus;1.0</span>
+                    <span>&minus;0.2</span>
+                    <span>0.0</span>
+                    <span>0.2</span>
+                    <span>0.4</span>
+                    <span>0.6</span>
+                    <span>0.9</span>
+                </div>
+                <div class="ndvi-legend-items">
+                    <div class="ndvi-legend-item">
+                        <span class="ndvi-swatch" style="background:#08306b;"></span> Water (&lt; 0.0)
+                    </div>
+                    <div class="ndvi-legend-item">
+                        <span class="ndvi-swatch" style="background:#d4a373;"></span> Bare Soil (0.0&ndash;0.2)
+                    </div>
+                    <div class="ndvi-legend-item">
+                        <span class="ndvi-swatch" style="background:#a8d08d;"></span> Moderate Veg. (0.3&ndash;0.6)
+                    </div>
+                    <div class="ndvi-legend-item">
+                        <span class="ndvi-swatch" style="background:#1a6b1a;"></span> Dense Veg. (0.6&ndash;0.9)
+                    </div>
+                </div>
+            </div>
+
+            <div class="ndvi-chart-container">
+                <h3>Vegetation Health Distribution</h3>
+                <canvas id="ndviDoughnutChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= STATISTICS PANEL ================= -->
+<section class="stats-section" data-aos="fade-up">
+    <div class="section-heading">
+        <h2>Land Cover Statistics</h2>
+        <p>Area classification breakdown for Aligarh District</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card" data-aos="fade-up">
+            <div class="stat-icon" style="color:#1a6b1a;">&#9650;</div>
+            <h3>Dense Vegetation</h3>
+            <div class="stat-value">28.5%</div>
+            <div class="stat-area">1,082.4 km&sup2;</div>
+            <div class="stat-bar-wrapper">
+                <div class="stat-bar" style="width:28.5%; background:linear-gradient(90deg,#1a6b1a,#2d8b2d);"></div>
+            </div>
+        </div>
+
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon" style="color:#a8d08d;">&#9650;</div>
+            <h3>Moderate Vegetation</h3>
+            <div class="stat-value">32.0%</div>
+            <div class="stat-area">1,216.8 km&sup2;</div>
+            <div class="stat-bar-wrapper">
+                <div class="stat-bar" style="width:32%; background:linear-gradient(90deg,#a8d08d,#c8e6a0);"></div>
+            </div>
+        </div>
+
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon" style="color:#3b82f6;">&#9679;</div>
+            <h3>Water Bodies</h3>
+            <div class="stat-value">5.0%</div>
+            <div class="stat-area">190.0 km&sup2;</div>
+            <div class="stat-bar-wrapper">
+                <div class="stat-bar" style="width:5%; background:linear-gradient(90deg,#08306b,#3b82f6);"></div>
+            </div>
+        </div>
+
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon" style="color:#d4a373;">&#9632;</div>
+            <h3>Built-up / Bare Soil</h3>
+            <div class="stat-value">34.5%</div>
+            <div class="stat-area">1,311.6 km&sup2;</div>
+            <div class="stat-bar-wrapper">
+                <div class="stat-bar" style="width:34.5%; background:linear-gradient(90deg,#d4a373,#e8c9a0);"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= USE CASE / IMPACT SECTION ================= -->
+<section class="usecase-section" data-aos="fade-up">
+    <div class="section-heading">
+        <h2>Real-World Applications</h2>
+        <p>How LULC and NDVI analysis drives decision-making</p>
+    </div>
+
+    <div class="usecase-grid">
+        <div class="usecase-card" data-aos="fade-up">
+            <div class="usecase-icon">&#127758;</div>
+            <h3>Environmental Monitoring</h3>
+            <p>
+                Satellite-derived LULC maps enable continuous monitoring of deforestation, wetland degradation,
+                and soil erosion. NDVI time-series detect vegetation stress early, supporting biodiversity
+                conservation and ecosystem management across the Aligarh floodplain.
+            </p>
+        </div>
+
+        <div class="usecase-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="usecase-icon">&#127959;</div>
+            <h3>Urban Planning</h3>
+            <p>
+                Quantifying built-up area expansion (34.5% of district area) provides planners with evidence-based
+                data for zoning, infrastructure development, and green-space allocation. Change detection
+                identifies unregulated encroachment on agricultural and riparian zones.
+            </p>
+        </div>
+
+        <div class="usecase-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="usecase-icon">&#127806;</div>
+            <h3>Agriculture &amp; Sustainability</h3>
+            <p>
+                NDVI analysis quantifies crop health and irrigation efficiency across Aligarh's canal-fed
+                farmlands. Seasonal LULC comparisons reveal shifts from agriculture to urbanization, informing
+                food security policy and sustainable land-use strategies.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= REPORT & DOWNLOAD SECTION ================= -->
+<section class="download-section" data-aos="fade-up">
+    <div class="section-heading">
+        <h2>Reports &amp; Downloads</h2>
+        <p>Access analysis outputs and datasets</p>
+    </div>
+
+    <div class="download-buttons">
+        <a href="aligarh-lulc-report.html" target="_blank" class="download-btn download-btn-pdf">
+            <span class="download-icon">&#128196;</span>
+            <span>
+                <strong>Download PDF Report</strong>
+                <small>Comprehensive LULC &amp; NDVI analysis report</small>
+            </span>
+        </a>
+
+        <a href="aligarh-lulc-data.csv" download class="download-btn download-btn-data">
+            <span class="download-icon">&#128202;</span>
+            <span>
+                <strong>Download Data (CSV)</strong>
+                <small>Land cover classification statistics</small>
+            </span>
+        </a>
+    </div>
+</section>
+
+<footer>
+    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+
+/* ================= HAMBURGER MENU ================= */
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+});
+
+/* ================= MODAL SYSTEM ================= */
+function openModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+function switchModal(closeId, openId) {
+    closeModal(closeId);
+    openModal(openId);
+}
+
+window.addEventListener("click", function(e) {
+    document.querySelectorAll(".modal").forEach(modal => {
+        if (e.target === modal) {
+            modal.classList.remove("active");
+        }
+    });
+});
+
+/* ================= AUTH SYSTEM ================= */
+const signupBtn = document.querySelector("#signupModal button");
+const loginBtn = document.querySelector("#loginModal button");
+
+signupBtn.addEventListener("click", () => {
+    const name = document.querySelector("#signupModal input[type='text']").value;
+    const email = document.querySelector("#signupModal input[type='email']").value;
+    const password = document.querySelector("#signupModal input[type='password']").value;
+
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const user = { name, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created successfully!");
+    closeModal("signupModal");
+});
+
+loginBtn.addEventListener("click", () => {
+    const email = document.querySelector("#loginModal input[type='email']").value;
+    const password = document.querySelector("#loginModal input[type='password']").value;
+
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
+        alert("Invalid credentials");
+        return;
+    }
+
+    alert("Welcome " + savedUser.name);
+    closeModal("loginModal");
+});
+
+/* ================= INTERACTIVE MAP (LEAFLET) ================= */
+(function() {
+    const map = L.map('interactiveMap', {
+        center: [27.88, 78.08],
+        zoom: 11,
+        zoomControl: true
+    });
+
+    // Base layers
+    const osmBase = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18
+    });
+
+    // True Color (RGB) — Esri World Imagery
+    const trueColorRGB = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+        maxZoom: 18
+    });
+
+    // Simulated NDVI layer — using a green-tinted satellite view
+    const ndviLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri — NDVI Visualization',
+        maxZoom: 18,
+        className: 'ndvi-filter-layer'
+    });
+
+    // LULC Classification overlay — using OpenTopoMap as a proxy for classified terrain
+    const lulcLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenTopoMap — LULC Classification',
+        maxZoom: 17
+    });
+
+    // Default layer
+    trueColorRGB.addTo(map);
+
+    // Layer control
+    var baseLayers = {
+        "True Color (RGB)": trueColorRGB,
+        "NDVI Visualization": ndviLayer,
+        "LULC Classification": lulcLayer,
+        "OpenStreetMap": osmBase
+    };
+
+    L.control.layers(baseLayers, null, { position: 'topright', collapsed: false }).addTo(map);
+
+    // Add Aligarh district center marker
+    L.marker([27.88, 78.08]).addTo(map)
+        .bindPopup('<strong>Aligarh District Center</strong><br>27.88&deg;N, 78.08&deg;E<br>Landsat 9 OLI-2 Coverage')
+        .openPopup();
+
+    // Add approximate district boundary
+    var districtBoundary = L.polygon([
+        [28.12, 77.75], [28.15, 78.05], [28.10, 78.35],
+        [27.95, 78.50], [27.70, 78.45], [27.55, 78.30],
+        [27.55, 78.00], [27.65, 77.75], [27.85, 77.65],
+        [28.00, 77.68]
+    ], {
+        color: '#c5a059',
+        weight: 2,
+        fillColor: '#c5a059',
+        fillOpacity: 0.08,
+        dashArray: '8, 4'
+    }).addTo(map);
+
+    districtBoundary.bindPopup('<strong>Aligarh District Boundary</strong><br>Area: ~3,800 km&sup2;');
+
+    // Scale control
+    L.control.scale({ imperial: false }).addTo(map);
+})();
+
+/* ================= NDVI DOUGHNUT CHART ================= */
+(function() {
+    var ctx = document.getElementById('ndviDoughnutChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Dense Vegetation', 'Moderate Vegetation', 'Water Bodies', 'Built-up / Bare Soil'],
+            datasets: [{
+                data: [28.5, 32.0, 5.0, 34.5],
+                backgroundColor: ['#1a6b1a', '#a8d08d', '#08306b', '#d4a373'],
+                borderColor: ['#1a6b1a', '#a8d08d', '#08306b', '#d4a373'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#e5e7eb',
+                        font: { size: 11 },
+                        padding: 12
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

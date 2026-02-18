@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligarh Geospatial Project | LULC Analysis | Mapathon 2026</title>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="lulc-data.html">LULC Data</a>
+            <a href="team.html">Team</a>
+            <a href="#" class="btn login-btn" onclick="openModal('loginModal')">Login</a>
+            <a href="#" class="btn signup-btn" onclick="openModal('signupModal')">Sign Up</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
+</header>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('loginModal')">&#10006;</span>
+        <h2>Login</h2>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+        <div class="switch-link" onclick="switchModal('loginModal','signupModal')">
+            Don't have an account? Sign Up
+        </div>
+    </div>
+</div>
+
+<!-- ================= SIGNUP MODAL ================= -->
+<div class="modal" id="signupModal">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal('signupModal')">&#10006;</span>
+        <h2>Sign Up</h2>
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Create Account</button>
+        <div class="switch-link" onclick="switchModal('signupModal','loginModal')">
+            Already have an account? Login
+        </div>
+    </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+    <div class="globe-bg"></div>
+    <div class="hero-text" data-aos="fade-down">
+        <h1>ALIGARH LULC ANALYSIS</h1>
+        <p>Land Use Land Cover Change Detection</p>
+    </div>
+</section>
+
+<!-- ================= PAGE NAVIGATION CARDS ================= -->
+<section style="padding: 80px 0 0;">
+    <div class="section-heading" data-aos="fade-up">
+        <h2>Explore the Project</h2>
+        <p>Navigate to different sections of our geospatial analysis</p>
+    </div>
+
+    <div class="page-cards">
+        <a href="analysis.html" class="page-card" data-aos="fade-up">
+            <h3>Satellite Analysis</h3>
+            <p>View Aligarh District satellite imagery and remote sensing data from Landsat 9 OLI-2 sensor.</p>
+        </a>
+
+        <a href="lulc-data.html" class="page-card" data-aos="fade-up" data-aos-delay="100">
+            <h3>LULC Data</h3>
+            <p>Interactive charts showing Land Use Land Cover change detection trends from 2000 to 2025.</p>
+        </a>
+
+        <a href="team.html" class="page-card" data-aos="fade-up" data-aos-delay="200">
+            <h3>Project Team</h3>
+            <p>Meet the geospatial developers and web developers behind this project.</p>
+        </a>
+    </div>
+</section>
+
+<footer>
+    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000, once: true });
+
+/* ================= HAMBURGER MENU ================= */
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+});
+
+/* ================= MODAL SYSTEM ================= */
+function openModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+function switchModal(closeId, openId) {
+    closeModal(closeId);
+    openModal(openId);
+}
+
+window.addEventListener("click", function(e) {
+    document.querySelectorAll(".modal").forEach(modal => {
+        if (e.target === modal) {
+            modal.classList.remove("active");
+        }
+    });
+});
+
+/* ================= AUTH SYSTEM ================= */
+const signupBtn = document.querySelector("#signupModal button");
+const loginBtn = document.querySelector("#loginModal button");
+
+signupBtn.addEventListener("click", () => {
+    const name = document.querySelector("#signupModal input[type='text']").value;
+    const email = document.querySelector("#signupModal input[type='email']").value;
+    const password = document.querySelector("#signupModal input[type='password']").value;
+
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    const user = { name, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created successfully!");
+    closeModal("signupModal");
+});
+
+loginBtn.addEventListener("click", () => {
+    const email = document.querySelector("#loginModal input[type='email']").value;
+    const password = document.querySelector("#loginModal input[type='password']").value;
+
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
+        alert("Invalid credentials");
+        return;
+    }
+
+    alert("Welcome " + savedUser.name);
+    closeModal("loginModal");
+});
+</script>
+
+</body>
+</html>
