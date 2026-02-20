@@ -1,33 +1,40 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Only POST allowed" });
   }
 
   const { message } = req.body;
 
-  const response = await fetch(
-    "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.HF_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inputs: `
-You are a professional geospatial AI assistant helping users understand LULC (Land Use Land Cover), NDVI, and satellite analysis for Aligarh District.
+  try {
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.HF_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: `Explain briefly about LULC and NDVI. Question: ${message}`,
+          parameters: { max_new_tokens: 120 }
+        }),
+      }
+    );
 
-User question:
-${message}
-        `,
-        parameters: { max_new_tokens: 200 }
-      }),
+    const data = await response.json();
+
+    // Debug fallback handling
+    if (data.error) {
+      return res.status(500).json({ reply: "Model is loading or API error." });
     }
-  );
 
-  const data = await response.json();
+    if (Array.isArray(data) && data[0]?.generated_text) {
+      return res.status(200).json({ reply: data[0].generated_text });
+    }
 
-  res.status(200).json({
-    reply: data[0]?.generated_text || "No response from model."
-  });
+    return res.status(500).json({ reply: "Unexpected response format." });
+
+  } catch (error) {
+    return res.status(500).json({ reply: "Server error connecting to AI." });
+  }
 }
