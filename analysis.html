@@ -28,9 +28,7 @@
   transition: 0.3s ease;
 }
 
-#ai-toggle:hover {
-  transform: scale(1.05);
-}
+#ai-toggle:hover { transform: scale(1.05); }
 
 #ai-chatbox {
   position: fixed;
@@ -45,12 +43,9 @@
   flex-direction: column;
   overflow: hidden;
   z-index: 9999;
-  animation: slideUp 0.3s ease forwards;
 }
 
-#ai-chatbox.active {
-  display: flex;
-}
+#ai-chatbox.active { display: flex; }
 
 #ai-header {
   background: linear-gradient(135deg, #0077ff, #00c6ff);
@@ -62,9 +57,7 @@
   align-items: center;
 }
 
-#ai-close {
-  cursor: pointer;
-}
+#ai-close { cursor: pointer; }
 
 #ai-messages {
   flex: 1;
@@ -112,11 +105,6 @@
   color: white;
   padding: 0 18px;
   cursor: pointer;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 </style>
@@ -190,6 +178,19 @@
 
 AOS.init({ duration: 1000, once: true });
 
+/* ================= HAMBURGER FIX ================= */
+
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+if (hamburger) {
+  hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+}
+
+/* ================= CHATBOT ================= */
+
 const toggle = document.getElementById("ai-toggle");
 const chatbox = document.getElementById("ai-chatbox");
 const closeBtn = document.getElementById("ai-close");
@@ -214,7 +215,6 @@ async function handleSend() {
 
   addMessage(text, "user");
   input.value = "";
-
   addMessage("Analyzing...", "bot");
 
   try {
@@ -229,17 +229,23 @@ async function handleSend() {
 
     const reply = data.reply;
 
-    // Detect JSON map command
     try {
       const parsed = JSON.parse(reply);
 
       if (parsed.type === "map") {
+
         addMessage("Opening map for: " + parsed.area, "bot");
 
-        // Redirect to analysis page with area parameter
-        window.location.href = "analysis.html?area=" + encodeURIComponent(parsed.area);
+        // Prevent infinite redirect if already on analysis page
+        if (!window.location.href.includes("analysis.html")) {
+          window.location.href =
+            "analysis.html?area=" +
+            encodeURIComponent(parsed.area);
+        }
+
         return;
       }
+
     } catch {}
 
     addMessage(reply || "No response.", "bot");
