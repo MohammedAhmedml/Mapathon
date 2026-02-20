@@ -7,7 +7,120 @@
 
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="ai-chat.css">
+
+<style>
+
+/* ================= AI CHAT STYLING ================= */
+
+#ai-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #0077ff, #00c6ff);
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+  transition: 0.3s ease;
+}
+
+#ai-toggle:hover {
+  transform: scale(1.05);
+}
+
+#ai-chatbox {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  width: 340px;
+  max-height: 480px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  animation: slideUp 0.3s ease forwards;
+}
+
+#ai-chatbox.active {
+  display: flex;
+}
+
+#ai-header {
+  background: linear-gradient(135deg, #0077ff, #00c6ff);
+  color: white;
+  padding: 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#ai-close {
+  cursor: pointer;
+}
+
+#ai-messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-message {
+  background: #0077ff;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 14px;
+  max-width: 80%;
+  align-self: flex-end;
+}
+
+.bot-message {
+  background: #e4e7ec;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 14px;
+  max-width: 80%;
+  align-self: flex-start;
+}
+
+#ai-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+#ai-input {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  outline: none;
+}
+
+#ai-send {
+  background: #0077ff;
+  border: none;
+  color: white;
+  padding: 0 18px;
+  cursor: pointer;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+</style>
+
 </head>
 
 <body>
@@ -22,53 +135,21 @@
             <a href="analysis.html">Analysis</a>
             <a href="lulc-data.html">LULC Data</a>
             <a href="team.html">Team</a>
-            <a href="#" class="btn login-btn" onclick="openModal('loginModal')">Login</a>
-            <a href="#" class="btn signup-btn" onclick="openModal('signupModal')">Sign Up</a>
         </nav>
 
         <div class="hamburger" id="hamburger">&#9776;</div>
     </div>
 </header>
 
-<!-- ================= LOGIN MODAL ================= -->
-<div class="modal" id="loginModal">
-    <div class="modal-box">
-        <span class="close-btn" onclick="closeModal('loginModal')">&#10006;</span>
-        <h2>Login</h2>
-        <input type="email" placeholder="Email">
-        <input type="password" placeholder="Password">
-        <button>Login</button>
-        <div class="switch-link" onclick="switchModal('loginModal','signupModal')">
-            Don't have an account? Sign Up
-        </div>
-    </div>
-</div>
-
-<!-- ================= SIGNUP MODAL ================= -->
-<div class="modal" id="signupModal">
-    <div class="modal-box">
-        <span class="close-btn" onclick="closeModal('signupModal')">&#10006;</span>
-        <h2>Sign Up</h2>
-        <input type="text" placeholder="Full Name">
-        <input type="email" placeholder="Email">
-        <input type="password" placeholder="Password">
-        <button>Create Account</button>
-        <div class="switch-link" onclick="switchModal('signupModal','loginModal')">
-            Already have an account? Login
-        </div>
-    </div>
-</div>
-
 <!-- ================= HERO ================= -->
 <section class="hero">
-    <div class="globe-bg"></div>
     <div class="hero-text" data-aos="fade-down">
         <h1>ALIGARH LULC ANALYSIS</h1>
         <p>Land Use Land Cover Change Detection</p>
     </div>
 </section>
 
-<!-- ================= PAGE NAVIGATION CARDS ================= -->
+<!-- ================= PROJECT CARDS ================= -->
 <section style="padding: 80px 0 0;">
     <div class="section-heading" data-aos="fade-up">
         <h2>Explore the Project</h2>
@@ -78,146 +159,98 @@
     <div class="page-cards">
         <a href="analysis.html" class="page-card" data-aos="fade-up">
             <h3>Satellite Analysis</h3>
-            <p>View Aligarh District satellite imagery and remote sensing data from Landsat 9 OLI-2 sensor.</p>
+            <p>View Landsat 9 satellite imagery and analysis.</p>
         </a>
 
-        <a href="lulc-data.html" class="page-card" data-aos="fade-up" data-aos-delay="100">
+        <a href="lulc-data.html" class="page-card" data-aos="fade-up">
             <h3>LULC Data</h3>
-            <p>Interactive charts showing Land Use Land Cover change detection trends from 2000 to 2025.</p>
+            <p>Interactive charts showing LULC trends from 2000–2025.</p>
         </a>
 
-        <a href="team.html" class="page-card" data-aos="fade-up" data-aos-delay="200">
+        <a href="team.html" class="page-card" data-aos="fade-up">
             <h3>Project Team</h3>
-            <p>Meet the geospatial developers and web developers behind this project.</p>
+            <p>Meet the developers behind this Mapathon project.</p>
         </a>
     </div>
 </section>
 
 <footer>
-    &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
+    &copy; 2026 Aligarh District Mapathon. Developed for academic submission.
 </footer>
-<!-- AI LULC Assistant -->
-<div id="ai-assistant-container">
-  <button id="ai-toggle">LULC Assistant</button>
-  <div id="ai-chatbox">
-    <div id="ai-header">LULC Assistant</div>
-    <div id="ai-messages"></div>
-    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI..." />
+
+<!-- ================= AI CHAT ================= -->
+
+<button id="ai-toggle">💬 LULC Assistant</button>
+
+<div id="ai-chatbox">
+  <div id="ai-header">
+    LULC Assistant
+    <span id="ai-close">✖</span>
+  </div>
+
+  <div id="ai-messages"></div>
+
+  <div id="ai-input-area">
+    <input type="text" id="ai-input" placeholder="Ask about LULC or NDVI..." />
+    <button id="ai-send">Send</button>
   </div>
 </div>
 
-<link rel="stylesheet" href="ai-chat.css">
-<script src="ai-chat.js"></script>
-
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 <script>
+
 AOS.init({ duration: 1000, once: true });
 
-/* ================= HAMBURGER MENU ================= */
-const hamburger = document.getElementById("hamburger");
-const navLinks = document.getElementById("navLinks");
-
-hamburger.addEventListener("click", () => {
-    navLinks.classList.toggle("active");
-});
-
-/* ================= MODAL SYSTEM ================= */
-function openModal(id) {
-    document.getElementById(id).classList.add("active");
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove("active");
-}
-
-function switchModal(closeId, openId) {
-    closeModal(closeId);
-    openModal(openId);
-}
-
-window.addEventListener("click", function(e) {
-    document.querySelectorAll(".modal").forEach(modal => {
-        if (e.target === modal) {
-            modal.classList.remove("active");
-        }
-    });
-});
-
-/* ================= AUTH SYSTEM ================= */
-const signupBtn = document.querySelector("#signupModal button");
-const loginBtn = document.querySelector("#loginModal button");
-
-signupBtn.addEventListener("click", () => {
-    const name = document.querySelector("#signupModal input[type='text']").value;
-    const email = document.querySelector("#signupModal input[type='email']").value;
-    const password = document.querySelector("#signupModal input[type='password']").value;
-
-    if (!name || !email || !password) {
-        alert("Please fill all fields");
-        return;
-    }
-
-    const user = { name, email, password };
-    localStorage.setItem("user", JSON.stringify(user));
-    alert("Account created successfully!");
-    closeModal("signupModal");
-});
-
-loginBtn.addEventListener("click", () => {
-    const email = document.querySelector("#loginModal input[type='email']").value;
-    const password = document.querySelector("#loginModal input[type='password']").value;
-
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-
-    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
-        alert("Invalid credentials");
-        return;
-    }
-
-    alert("Welcome " + savedUser.name);
-    closeModal("loginModal");
-});
+/* ================= AI CHAT SYSTEM ================= */
 
 const toggle = document.getElementById("ai-toggle");
 const chatbox = document.getElementById("ai-chatbox");
+const closeBtn = document.getElementById("ai-close");
 const input = document.getElementById("ai-input");
+const sendBtn = document.getElementById("ai-send");
 const messages = document.getElementById("ai-messages");
 
-toggle.onclick = () => {
-  chatbox.style.display =
-    chatbox.style.display === "flex" ? "none" : "flex";
-};
+toggle.onclick = () => chatbox.classList.toggle("active");
+closeBtn.onclick = () => chatbox.classList.remove("active");
 
-function addMessage(text, sender="bot") {
+function addMessage(text, sender) {
   const div = document.createElement("div");
-  div.innerHTML = `<strong>${sender === "bot" ? "Assistant" : "You"}:</strong> ${text}`;
+  div.className = sender === "user" ? "user-message" : "bot-message";
+  div.innerText = text;
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
-async function getAIResponse(userMessage) {
-  const response = await fetch("/api/chat", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ message: userMessage }),
-  });
+async function handleSend() {
+  const text = input.value.trim();
+  if (!text) return;
 
-  const data = await response.json();
-  return data.reply;
+  addMessage(text, "user");
+  input.value = "";
+
+  addMessage("Analyzing...", "bot");
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    });
+
+    const data = await response.json();
+    messages.lastChild.remove();
+    addMessage(data.reply || "No response.", "bot");
+
+  } catch {
+    messages.lastChild.remove();
+    addMessage("Error connecting to assistant.", "bot");
+  }
 }
 
-input.addEventListener("keypress", async function(e) {
-  if (e.key === "Enter") {
-    const text = input.value;
-    addMessage(text, "user");
-    input.value = "";
-
-    addMessage("Analyzing...", "bot");
-    const reply = await getAIResponse(text);
-
-    messages.lastChild.remove();
-    addMessage(reply, "bot");
-  }
+sendBtn.addEventListener("click", handleSend);
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") handleSend();
 });
 
 </script>
