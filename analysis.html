@@ -3,69 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aligarh LULC Analysis | Mapathon 2026</title>
+<title>Aligarh Geospatial Project | LULC Analysis | Mapathon 2026</title>
 
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 
 <style>
 
-/* ================= HERO ================= */
+/* ================= AI CHAT STYLING ================= */
 
-.hero {
-  height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+#ai-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #0077ff, #00c6ff);
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+  transition: 0.3s ease;
 }
 
-.globe-bg {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle at center, #0077ff 0%, transparent 70%);
-  border-radius: 50%;
-  animation: rotate 20s linear infinite;
-  opacity: 0.15;
+#ai-toggle:hover {
+  transform: scale(1.05);
 }
 
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ================= MAP ================= */
-
-#map {
-  height: 550px;
-  width: 90%;
-  margin: 40px auto;
-  border-radius: 15px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-}
-
-.legend {
+#ai-chatbox {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  width: 340px;
+  max-height: 480px;
   background: white;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  line-height: 1.6;
+  border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  animation: slideUp 0.3s ease forwards;
 }
 
-.legend span {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  margin-right: 8px;
+#ai-chatbox.active {
+  display: flex;
 }
 
-footer {
-  text-align: center;
-  padding: 20px;
+#ai-header {
+  background: linear-gradient(135deg, #0077ff, #00c6ff);
+  color: white;
+  padding: 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#ai-close {
+  cursor: pointer;
+}
+
+#ai-messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-message {
+  background: #0077ff;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 14px;
+  max-width: 80%;
+  align-self: flex-end;
+}
+
+.bot-message {
+  background: #e4e7ec;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 14px;
+  max-width: 80%;
+  align-self: flex-start;
+}
+
+#ai-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+#ai-input {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  outline: none;
+}
+
+#ai-send {
+  background: #0077ff;
+  border: none;
+  color: white;
+  padding: 0 18px;
+  cursor: pointer;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 </style>
@@ -74,111 +125,138 @@ footer {
 <body>
 
 <header class="navbar">
-  <div class="nav-container">
-    <a href="index.html" class="logo">ALIGARH GIS</a>
-    <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="analysis.html" class="active">Analysis</a>
-      <a href="lulc-data.html">LULC Data</a>
-      <a href="team.html">Team</a>
-    </nav>
-  </div>
+    <div class="nav-container">
+        <a href="index.html" class="logo">ALIGARH GIS</a>
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="lulc-data.html">LULC Data</a>
+            <a href="team.html">Team</a>
+        </nav>
+        <div class="hamburger" id="hamburger">&#9776;</div>
+    </div>
 </header>
 
-<!-- ================= HERO ================= -->
-
 <section class="hero">
-  <div class="globe-bg"></div>
-  <div data-aos="fade-down">
-    <h1>ALIGARH LULC ANALYSIS</h1>
-    <p>OpenStreetMap + NDVI Visualization</p>
-  </div>
+    <div class="hero-text" data-aos="fade-down">
+        <h1>ALIGARH LULC ANALYSIS</h1>
+        <p>Land Use Land Cover Change Detection</p>
+    </div>
 </section>
 
-<!-- ================= MAP SECTION ================= -->
+<section style="padding: 80px 0 0;">
+    <div class="section-heading" data-aos="fade-up">
+        <h2>Explore the Project</h2>
+        <p>Navigate to different sections of our geospatial analysis</p>
+    </div>
 
-<section data-aos="fade-up">
-  <div id="map"></div>
+    <div class="page-cards">
+        <a href="analysis.html" class="page-card" data-aos="fade-up">
+            <h3>Satellite Analysis</h3>
+            <p>View Landsat 9 satellite imagery and analysis.</p>
+        </a>
+        <a href="lulc-data.html" class="page-card" data-aos="fade-up">
+            <h3>LULC Data</h3>
+            <p>Interactive charts showing LULC trends from 2000–2025.</p>
+        </a>
+        <a href="team.html" class="page-card" data-aos="fade-up">
+            <h3>Project Team</h3>
+            <p>Meet the developers behind this Mapathon project.</p>
+        </a>
+    </div>
 </section>
 
 <footer>
-  &copy; 2026 Aligarh District Mapathon.
+    &copy; 2026 Aligarh District Mapathon.
 </footer>
 
+<button id="ai-toggle">💬 LULC Assistant</button>
+
+<div id="ai-chatbox">
+  <div id="ai-header">
+    LULC Assistant
+    <span id="ai-close">✖</span>
+  </div>
+  <div id="ai-messages"></div>
+  <div id="ai-input-area">
+    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI, urban area..." />
+    <button id="ai-send">Send</button>
+  </div>
+</div>
+
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 
 AOS.init({ duration: 1000, once: true });
 
-// ================= MAP INITIALIZATION =================
+const toggle = document.getElementById("ai-toggle");
+const chatbox = document.getElementById("ai-chatbox");
+const closeBtn = document.getElementById("ai-close");
+const input = document.getElementById("ai-input");
+const sendBtn = document.getElementById("ai-send");
+const messages = document.getElementById("ai-messages");
 
-var map = L.map('map').setView([27.8974, 78.0880], 11);
+toggle.onclick = () => chatbox.classList.toggle("active");
+closeBtn.onclick = () => chatbox.classList.remove("active");
 
-// OpenStreetMap Base Layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
+function addMessage(text, sender) {
+  const div = document.createElement("div");
+  div.className = sender === "user" ? "user-message" : "bot-message";
+  div.innerText = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
 
-// ================= LULC LAYERS =================
+async function handleSend() {
+  const text = input.value.trim();
+  if (!text) return;
 
-// Urban
-var urbanLayer = L.circle([27.8974, 78.0880], {
-  radius: 3000,
-  color: "red",
-  fillOpacity: 0.5
+  addMessage(text, "user");
+  input.value = "";
+
+  addMessage("Analyzing...", "bot");
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    });
+
+    const data = await response.json();
+    messages.lastChild.remove();
+
+    const reply = data.reply;
+
+    // Detect map command
+    try {
+      const parsed = JSON.parse(reply);
+      if (parsed.type === "map") {
+        addMessage("Displaying area: " + parsed.area, "bot");
+        focusOnArea(parsed.area);
+        return;
+      }
+    } catch {}
+
+    addMessage(reply || "No response.", "bot");
+
+  } catch {
+    messages.lastChild.remove();
+    addMessage("Error connecting to assistant.", "bot");
+  }
+}
+
+sendBtn.addEventListener("click", handleSend);
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") handleSend();
 });
 
-// Vegetation
-var vegetationLayer = L.circle([27.9100, 78.0700], {
-  radius: 3500,
-  color: "green",
-  fillOpacity: 0.4
-});
-
-// Water
-var waterLayer = L.circle([27.8800, 78.0600], {
-  radius: 2000,
-  color: "blue",
-  fillOpacity: 0.5
-});
-
-// NDVI Layer
-var ndviLayer = L.circle([27.9000, 78.0800], {
-  radius: 4000,
-  color: "darkgreen",
-  fillOpacity: 0.3
-});
-
-// ================= LAYER CONTROL =================
-
-var overlayMaps = {
-  "Urban": urbanLayer,
-  "Vegetation": vegetationLayer,
-  "Water": waterLayer,
-  "NDVI": ndviLayer
-};
-
-L.control.layers(null, overlayMaps).addTo(map);
-
-// ================= LEGEND =================
-
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function () {
-  var div = L.DomUtil.create('div', 'legend');
-  div.innerHTML = `
-    <strong>LULC Legend</strong><br>
-    <span style="background:red"></span> Urban<br>
-    <span style="background:green"></span> Vegetation<br>
-    <span style="background:blue"></span> Water<br>
-    <span style="background:darkgreen"></span> NDVI
-  `;
-  return div;
-};
-
-legend.addTo(map);
+/* Placeholder map function */
+function focusOnArea(areaName) {
+  console.log("Map focus requested:", areaName);
+  // Connect this to your Leaflet map in analysis.html
+}
 
 </script>
 
