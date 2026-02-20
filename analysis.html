@@ -151,15 +151,15 @@
     </div>
 
     <div class="page-cards">
-        <a href="analysis.html" class="page-card" data-aos="fade-up">
+        <a href="analysis.html" class="page-card">
             <h3>Satellite Analysis</h3>
             <p>View Landsat 9 satellite imagery and analysis.</p>
         </a>
-        <a href="lulc-data.html" class="page-card" data-aos="fade-up">
+        <a href="lulc-data.html" class="page-card">
             <h3>LULC Data</h3>
             <p>Interactive charts showing LULC trends from 2000–2025.</p>
         </a>
-        <a href="team.html" class="page-card" data-aos="fade-up">
+        <a href="team.html" class="page-card">
             <h3>Project Team</h3>
             <p>Meet the developers behind this Mapathon project.</p>
         </a>
@@ -229,12 +229,15 @@ async function handleSend() {
 
     const reply = data.reply;
 
-    // Detect map command
+    // Detect JSON map command
     try {
       const parsed = JSON.parse(reply);
+
       if (parsed.type === "map") {
-        addMessage("Displaying area: " + parsed.area, "bot");
-        focusOnArea(parsed.area);
+        addMessage("Opening map for: " + parsed.area, "bot");
+
+        // Redirect to analysis page with area parameter
+        window.location.href = "analysis.html?area=" + encodeURIComponent(parsed.area);
         return;
       }
     } catch {}
@@ -251,12 +254,6 @@ sendBtn.addEventListener("click", handleSend);
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") handleSend();
 });
-
-/* Placeholder map function */
-function focusOnArea(areaName) {
-  console.log("Map focus requested:", areaName);
-  // Connect this to your Leaflet map in analysis.html
-}
 
 </script>
 
