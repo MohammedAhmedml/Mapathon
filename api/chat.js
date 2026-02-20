@@ -6,35 +6,36 @@ export default async function handler(req, res) {
   const { message } = req.body;
 
   try {
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.HF_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: `Explain briefly about LULC and NDVI. Question: ${message}`,
-          parameters: { max_new_tokens: 120 }
-        }),
-      }
-    );
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama3-8b-8192",
+        messages: [
+          {
+            role: "system",
+            content: "You are a geospatial assistant. Give brief, clear explanations about LULC, NDVI, satellite imagery, and environmental analysis."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 150
+      })
+    });
 
     const data = await response.json();
 
-    // Debug fallback handling
-    if (data.error) {
-      return res.status(500).json({ reply: "Model is loading or API error." });
-    }
-
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      return res.status(200).json({ reply: data[0].generated_text });
-    }
-
-    return res.status(500).json({ reply: "Unexpected response format." });
+    res.status(200).json({
+      reply: data.choices?.[0]?.message?.content || "No response."
+    });
 
   } catch (error) {
-    return res.status(500).json({ reply: "Server error connecting to AI." });
+    res.status(500).json({ reply: "Error connecting to Groq API." });
   }
 }
