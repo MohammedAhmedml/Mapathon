@@ -15,11 +15,11 @@ export default async function handler(req, res) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "llama3-70b-8192",
+          model: "llama-3.1-8b-instant",
           messages: [
             {
               role: "system",
-              content: "You are a professional geospatial assistant. Provide short, clear explanations about LULC (Land Use Land Cover), NDVI, satellite imagery, and environmental analysis. Keep responses concise and educational."
+              content: "You are a professional geospatial assistant. Provide short, clear explanations about LULC (Land Use Land Cover), NDVI, satellite imagery, and environmental analysis."
             },
             {
               role: "user",
@@ -40,18 +40,11 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!data.choices || !data.choices[0]) {
-      return res.status(500).json({
-        reply: "Unexpected API response."
-      });
-    }
-
     return res.status(200).json({
-      reply: data.choices[0].message.content
+      reply: data.choices?.[0]?.message?.content || "No response."
     });
 
   } catch (error) {
-    console.error("Server Error:", error);
     return res.status(500).json({
       reply: "Server error connecting to Groq."
     });
