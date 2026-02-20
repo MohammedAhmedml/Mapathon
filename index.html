@@ -120,28 +120,23 @@
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
 <header class="navbar">
     <div class="nav-container">
         <a href="index.html" class="logo">ALIGARH GIS</a>
-
         <nav class="nav-links" id="navLinks">
             <a href="index.html" class="active">Home</a>
             <a href="analysis.html">Analysis</a>
             <a href="lulc-data.html">LULC Data</a>
             <a href="team.html">Team</a>
         </nav>
-
         <div class="hamburger" id="hamburger">&#9776;</div>
     </div>
 </header>
 
-<!-- ================= HERO ================= -->
 <section class="hero">
     <div class="hero-text" data-aos="fade-down">
         <h1>ALIGARH LULC ANALYSIS</h1>
@@ -149,7 +144,6 @@
     </div>
 </section>
 
-<!-- ================= PROJECT CARDS ================= -->
 <section style="padding: 80px 0 0;">
     <div class="section-heading" data-aos="fade-up">
         <h2>Explore the Project</h2>
@@ -157,17 +151,15 @@
     </div>
 
     <div class="page-cards">
-        <a href="analysis.html" class="page-card" data-aos="fade-up">
+        <a href="analysis.html" class="page-card">
             <h3>Satellite Analysis</h3>
             <p>View Landsat 9 satellite imagery and analysis.</p>
         </a>
-
-        <a href="lulc-data.html" class="page-card" data-aos="fade-up">
+        <a href="lulc-data.html" class="page-card">
             <h3>LULC Data</h3>
             <p>Interactive charts showing LULC trends from 2000–2025.</p>
         </a>
-
-        <a href="team.html" class="page-card" data-aos="fade-up">
+        <a href="team.html" class="page-card">
             <h3>Project Team</h3>
             <p>Meet the developers behind this Mapathon project.</p>
         </a>
@@ -175,10 +167,8 @@
 </section>
 
 <footer>
-    &copy; 2026 Aligarh District Mapathon. Developed for academic submission.
+    &copy; 2026 Aligarh District Mapathon.
 </footer>
-
-<!-- ================= AI CHAT ================= -->
 
 <button id="ai-toggle">💬 LULC Assistant</button>
 
@@ -187,11 +177,9 @@
     LULC Assistant
     <span id="ai-close">✖</span>
   </div>
-
   <div id="ai-messages"></div>
-
   <div id="ai-input-area">
-    <input type="text" id="ai-input" placeholder="Ask about LULC or NDVI..." />
+    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI, urban area..." />
     <button id="ai-send">Send</button>
   </div>
 </div>
@@ -201,8 +189,6 @@
 <script>
 
 AOS.init({ duration: 1000, once: true });
-
-/* ================= AI CHAT SYSTEM ================= */
 
 const toggle = document.getElementById("ai-toggle");
 const chatbox = document.getElementById("ai-chatbox");
@@ -240,7 +226,30 @@ async function handleSend() {
 
     const data = await response.json();
     messages.lastChild.remove();
-    addMessage(data.reply || "No response.", "bot");
+
+    const reply = data.reply;
+
+    // Detect JSON map command
+try {
+  const parsed = JSON.parse(reply);
+
+  if (parsed.type === "map") {
+
+    addMessage("Opening map for: " + parsed.area, "bot");
+
+    // Redirect to analysis page with parameters
+    window.location.href =
+      "analysis.html?area=" +
+      encodeURIComponent(parsed.area) +
+      "&layer=" +
+      encodeURIComponent(parsed.layer || "");
+
+    return;
+  }
+
+} catch {}
+
+    addMessage(reply || "No response.", "bot");
 
   } catch {
     messages.lastChild.remove();

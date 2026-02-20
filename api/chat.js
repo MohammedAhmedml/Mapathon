@@ -19,34 +19,44 @@ export default async function handler(req, res) {
           messages: [
             {
               role: "system",
-              content: "You are a professional geospatial assistant. Provide short, clear explanations about LULC (Land Use Land Cover), NDVI, satellite imagery, and environmental analysis."
+              content: `
+You are an intelligent GIS assistant embedded in a Mapathon project website.
+
+Project Context:
+- Location: Aligarh District
+- Data Source: Landsat 9 OLI-2
+- Analysis: LULC classification (2000–2025)
+- Includes NDVI analysis and change detection.
+
+Instructions:
+- Answer specifically to the user’s question.
+- Do NOT give generic textbook answers unless asked.
+- If user mentions a location (e.g., urban area, vegetation, water body),
+  respond clearly and explain what it means in the context of Aligarh.
+- If user requests to "show area" or "highlight area",
+  respond in JSON format:
+  {
+    "type": "map",
+    "area": "name_of_area"
+  }
+Otherwise respond normally in text.
+`
             },
-            {
-              role: "user",
-              content: message
-            }
+            { role: "user", content: message }
           ],
-          temperature: 0.4,
-          max_tokens: 150
+          temperature: 0.3,
+          max_tokens: 300
         })
       }
     );
 
     const data = await response.json();
 
-    if (data.error) {
-      return res.status(500).json({
-        reply: data.error.message || "Groq API error."
-      });
-    }
+    const reply = data.choices?.[0]?.message?.content || "No response.";
 
-    return res.status(200).json({
-      reply: data.choices?.[0]?.message?.content || "No response."
-    });
+    res.status(200).json({ reply });
 
   } catch (error) {
-    return res.status(500).json({
-      reply: "Server error connecting to Groq."
-    });
+    res.status(500).json({ reply: "Server error connecting to AI." });
   }
 }
