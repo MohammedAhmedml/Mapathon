@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aligarh Geospatial Project | LULC Analysis | Mapathon 2026</title>
+<title>Aligarh LULC Analysis | Mapathon 2026</title>
 
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <style>
 
@@ -37,28 +38,29 @@
   to { transform: rotate(360deg); }
 }
 
-/* ================= PAGE CARDS ================= */
+/* ================= MAP ================= */
 
-.page-cards {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  padding: 60px 20px;
+#map {
+  height: 550px;
+  width: 90%;
+  margin: 40px auto;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
 }
 
-.page-card {
+.legend {
   background: white;
-  padding: 30px;
-  border-radius: 12px;
-  width: 260px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  text-align: center;
-  transition: 0.3s ease;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  line-height: 1.6;
 }
 
-.page-card:hover {
-  transform: translateY(-5px);
+.legend span {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
 }
 
 footer {
@@ -72,55 +74,112 @@ footer {
 <body>
 
 <header class="navbar">
-    <div class="nav-container">
-        <a href="index.html" class="logo">ALIGARH GIS</a>
-        <nav class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="analysis.html" class="active">Analysis</a>
-            <a href="lulc-data.html">LULC Data</a>
-            <a href="team.html">Team</a>
-        </nav>
-    </div>
+  <div class="nav-container">
+    <a href="index.html" class="logo">ALIGARH GIS</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="analysis.html" class="active">Analysis</a>
+      <a href="lulc-data.html">LULC Data</a>
+      <a href="team.html">Team</a>
+    </nav>
+  </div>
 </header>
 
-<!-- ================= HERO SECTION ================= -->
+<!-- ================= HERO ================= -->
 
 <section class="hero">
   <div class="globe-bg"></div>
   <div data-aos="fade-down">
     <h1>ALIGARH LULC ANALYSIS</h1>
-    <p>Land Use Land Cover Change Detection (2000–2025)</p>
+    <p>OpenStreetMap + NDVI Visualization</p>
   </div>
 </section>
 
-<!-- ================= PROJECT SECTIONS ================= -->
+<!-- ================= MAP SECTION ================= -->
 
 <section data-aos="fade-up">
-  <div class="page-cards">
-    <div class="page-card">
-      <h3>Satellite Imagery</h3>
-      <p>Landsat 9 OLI-2 imagery analysis of Aligarh District.</p>
-    </div>
-
-    <div class="page-card">
-      <h3>LULC Classification</h3>
-      <p>Urban, Vegetation, and Water body detection using GIS tools.</p>
-    </div>
-
-    <div class="page-card">
-      <h3>Change Detection</h3>
-      <p>Temporal analysis of land use changes between 2000 and 2025.</p>
-    </div>
-  </div>
+  <div id="map"></div>
 </section>
 
 <footer>
-    &copy; 2026 Aligarh District Mapathon. Developed for academic submission.
+  &copy; 2026 Aligarh District Mapathon.
 </footer>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
+
 AOS.init({ duration: 1000, once: true });
+
+// ================= MAP INITIALIZATION =================
+
+var map = L.map('map').setView([27.8974, 78.0880], 11);
+
+// OpenStreetMap Base Layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// ================= LULC LAYERS =================
+
+// Urban
+var urbanLayer = L.circle([27.8974, 78.0880], {
+  radius: 3000,
+  color: "red",
+  fillOpacity: 0.5
+});
+
+// Vegetation
+var vegetationLayer = L.circle([27.9100, 78.0700], {
+  radius: 3500,
+  color: "green",
+  fillOpacity: 0.4
+});
+
+// Water
+var waterLayer = L.circle([27.8800, 78.0600], {
+  radius: 2000,
+  color: "blue",
+  fillOpacity: 0.5
+});
+
+// NDVI Layer
+var ndviLayer = L.circle([27.9000, 78.0800], {
+  radius: 4000,
+  color: "darkgreen",
+  fillOpacity: 0.3
+});
+
+// ================= LAYER CONTROL =================
+
+var overlayMaps = {
+  "Urban": urbanLayer,
+  "Vegetation": vegetationLayer,
+  "Water": waterLayer,
+  "NDVI": ndviLayer
+};
+
+L.control.layers(null, overlayMaps).addTo(map);
+
+// ================= LEGEND =================
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function () {
+  var div = L.DomUtil.create('div', 'legend');
+  div.innerHTML = `
+    <strong>LULC Legend</strong><br>
+    <span style="background:red"></span> Urban<br>
+    <span style="background:green"></span> Vegetation<br>
+    <span style="background:blue"></span> Water<br>
+    <span style="background:darkgreen"></span> NDVI
+  `;
+  return div;
+};
+
+legend.addTo(map);
+
 </script>
 
 </body>
