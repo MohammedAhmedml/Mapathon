@@ -3,152 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Satellite Analysis | Aligarh LULC</title>
+<title>Aligarh LULC Analysis | Mapathon 2026</title>
 
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <style>
+
+/* ================= HERO ================= */
+
+.hero {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.globe-bg {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle at center, #0077ff 0%, transparent 70%);
+  border-radius: 50%;
+  animation: rotate 20s linear infinite;
+  opacity: 0.15;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ================= MAP ================= */
+
 #map {
   height: 600px;
   width: 92%;
   margin: 40px auto;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.control-panel {
+  width: 92%;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .legend {
   background: white;
-  padding: 10px;
-  border-radius: 8px;
-  line-height: 1.6;
-  font-size: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .legend div {
   display: flex;
   align-items: center;
+  margin: 4px 0;
 }
 
 .legend span {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   margin-right: 8px;
-  display: inline-block;
 }
 
-.control-panel {
-  width: 92%;
-  margin: auto;
-  text-align: center;
-  margin-top: 20px;
+/* ================= STATS ================= */
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 0;
+  flex-wrap: wrap;
 }
+
+.stat-box {
+  text-align: center;
+  padding: 20px;
+}
+
+.stat-box h2 {
+  font-size: 32px;
+  color: #0077ff;
+}
+
 </style>
 </head>
 
 <body>
 
 <header class="navbar">
-    <div class="nav-container">
-        <a href="index.html" class="logo">ALIGARH GIS</a>
-        <nav class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="analysis.html" class="active">Analysis</a>
-            <a href="lulc-data.html">LULC Data</a>
-            <a href="team.html">Team</a>
-        </nav>
-    </div>
+  <div class="nav-container">
+    <a href="index.html" class="logo">ALIGARH GIS</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="analysis.html" class="active">Analysis</a>
+      <a href="lulc-data.html">LULC Data</a>
+      <a href="team.html">Team</a>
+    </nav>
+  </div>
 </header>
 
-<section style="text-align:center; padding: 40px;">
-    <h1>Interactive LULC & NDVI Map</h1>
-    <p>Aligarh District (2000–2025)</p>
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+  <div class="globe-bg"></div>
+  <div data-aos="fade-down">
+    <h1>ALIGARH LULC CHANGE ANALYSIS</h1>
+    <p>Urban Expansion & Vegetation Monitoring (2000–2025)</p>
+  </div>
 </section>
 
+<!-- ================= STATS ================= -->
+
+<section class="stats" data-aos="fade-up">
+  <div class="stat-box">
+    <h2>+32%</h2>
+    <p>Urban Growth</p>
+  </div>
+  <div class="stat-box">
+    <h2>-18%</h2>
+    <p>Vegetation Decline</p>
+  </div>
+  <div class="stat-box">
+    <h2>NDVI 0.62</h2>
+    <p>Average Index</p>
+  </div>
+</section>
+
+<!-- ================= CONTROL PANEL ================= -->
+
 <div class="control-panel">
-  <label>Select Year: </label>
-  <select id="yearSelect">
-    <option value="2000">2000</option>
-    <option value="2010">2010</option>
-    <option value="2020">2020</option>
-    <option value="2025">2025</option>
-  </select>
+  <div>
+    <label><strong>Select Year:</strong></label>
+    <input type="range" min="2000" max="2025" step="5" value="2000" id="yearSlider">
+    <span id="yearLabel">2000</span>
+  </div>
+
+  <div class="legend">
+    <strong>LULC Legend</strong>
+    <div><span style="background:red"></span> Urban</div>
+    <div><span style="background:green"></span> Vegetation</div>
+    <div><span style="background:blue"></span> Water</div>
+    <div><span style="background:darkgreen"></span> NDVI</div>
+  </div>
 </div>
+
+<!-- ================= MAP ================= -->
 
 <div id="map"></div>
 
+<footer style="text-align:center; padding:20px;">
+  &copy; 2026 Aligarh District Mapathon
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 
+AOS.init({ duration: 1000, once: true });
+
 // Initialize map
 var map = L.map('map').setView([27.8974, 78.0880], 11);
 
-// Base layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
+  attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Simulated LULC Layers
-var urbanLayer = L.circle([27.8974, 78.0880], { radius: 3000, color: "red" });
-var vegetationLayer = L.circle([27.9100, 78.0700], { radius: 3500, color: "green" });
-var waterLayer = L.circle([27.8800, 78.0600], { radius: 2000, color: "blue" });
+let urbanLayer, vegetationLayer, waterLayer, ndviLayer;
 
-// NDVI-style heat simulation
-var ndviLayer = L.circle([27.9000, 78.0800], { radius: 4000, color: "darkgreen", fillOpacity: 0.4 });
+function createLayers(year) {
 
-// Layer control
-var overlayMaps = {
-  "Urban Area": urbanLayer,
-  "Vegetation": vegetationLayer,
-  "Water Body": waterLayer,
-  "NDVI Layer": ndviLayer
-};
+  if (urbanLayer) map.removeLayer(urbanLayer);
+  if (vegetationLayer) map.removeLayer(vegetationLayer);
+  if (waterLayer) map.removeLayer(waterLayer);
+  if (ndviLayer) map.removeLayer(ndviLayer);
 
-L.control.layers(null, overlayMaps).addTo(map);
+  const urbanRadius = (year - 1995) * 200;
+  const vegRadius = 5000 - (year - 2000) * 100;
 
-// Legend
-var legend = L.control({position: 'bottomright'});
-legend.onAdd = function () {
-    var div = L.DomUtil.create('div', 'legend');
-    div.innerHTML = `
-        <div><span style="background:red"></span> Urban</div>
-        <div><span style="background:green"></span> Vegetation</div>
-        <div><span style="background:blue"></span> Water</div>
-        <div><span style="background:darkgreen"></span> NDVI</div>
-    `;
-    return div;
-};
-legend.addTo(map);
+  urbanLayer = L.circle([27.8974, 78.0880], {
+    radius: urbanRadius,
+    color: "red",
+    fillOpacity: 0.5
+  });
 
-// URL Parameter Handling
+  vegetationLayer = L.circle([27.9100, 78.0700], {
+    radius: vegRadius,
+    color: "green",
+    fillOpacity: 0.4
+  });
+
+  waterLayer = L.circle([27.8800, 78.0600], {
+    radius: 2000,
+    color: "blue",
+    fillOpacity: 0.5
+  });
+
+  ndviLayer = L.circle([27.9000, 78.0800], {
+    radius: 4500,
+    color: "darkgreen",
+    fillOpacity: 0.3
+  });
+}
+
+createLayers(2000);
+
+// Year slider
+const slider = document.getElementById("yearSlider");
+const yearLabel = document.getElementById("yearLabel");
+
+slider.addEventListener("input", function() {
+  yearLabel.innerText = this.value;
+  createLayers(parseInt(this.value));
+});
+
+// URL control from chatbot
 const params = new URLSearchParams(window.location.search);
 const area = params.get("area");
 const layer = params.get("layer");
 
-// Area Zoom
 const locations = {
-  "urban": [27.8974, 78.0880],
-  "vegetation": [27.9100, 78.0700],
-  "water": [27.8800, 78.0600]
+  urban: [27.8974, 78.0880],
+  vegetation: [27.9100, 78.0700],
+  water: [27.8800, 78.0600]
 };
 
 if (area && locations[area.toLowerCase()]) {
   map.setView(locations[area.toLowerCase()], 13);
 }
 
-// Auto Layer Activation
 if (layer) {
   if (layer === "urban") urbanLayer.addTo(map);
   if (layer === "vegetation") vegetationLayer.addTo(map);
   if (layer === "water") waterLayer.addTo(map);
   if (layer === "ndvi") ndviLayer.addTo(map);
 }
-
-// Year change simulation
-document.getElementById("yearSelect").addEventListener("change", function() {
-  alert("Year changed to " + this.value + " (connect real raster layers here)");
-});
 
 </script>
 

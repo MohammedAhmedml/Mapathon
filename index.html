@@ -124,6 +124,7 @@
 
 <body>
 
+<!-- ================= NAVBAR ================= -->
 <header class="navbar">
     <div class="nav-container">
         <a href="index.html" class="logo">ALIGARH GIS</a>
@@ -137,7 +138,9 @@
     </div>
 </header>
 
+<!-- ================= HERO (Your Rotating Globe Stays) ================= -->
 <section class="hero">
+    <div class="globe-bg"></div>
     <div class="hero-text" data-aos="fade-down">
         <h1>ALIGARH LULC ANALYSIS</h1>
         <p>Land Use Land Cover Change Detection</p>
@@ -170,6 +173,8 @@
     &copy; 2026 Aligarh District Mapathon.
 </footer>
 
+<!-- ================= AI CHAT ================= -->
+
 <button id="ai-toggle">💬 LULC Assistant</button>
 
 <div id="ai-chatbox">
@@ -179,7 +184,7 @@
   </div>
   <div id="ai-messages"></div>
   <div id="ai-input-area">
-    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI, urban area..." />
+    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI, show urban map..." />
     <button id="ai-send">Send</button>
   </div>
 </div>
@@ -214,7 +219,6 @@ async function handleSend() {
 
   addMessage(text, "user");
   input.value = "";
-
   addMessage("Analyzing...", "bot");
 
   try {
@@ -229,25 +233,24 @@ async function handleSend() {
 
     const reply = data.reply;
 
-    // Detect JSON map command
-try {
-  const parsed = JSON.parse(reply);
+    // 🔥 NEW SMART MAP DETECTION
+    try {
+      const parsed = JSON.parse(reply);
 
-  if (parsed.type === "map") {
+      if (parsed.type === "map") {
 
-    addMessage("Opening map for: " + parsed.area, "bot");
+        addMessage("Opening requested map...", "bot");
 
-    // Redirect to analysis page with parameters
-    window.location.href =
-      "analysis.html?area=" +
-      encodeURIComponent(parsed.area) +
-      "&layer=" +
-      encodeURIComponent(parsed.layer || "");
+        window.location.href =
+          "analysis.html?area=" +
+          encodeURIComponent(parsed.area || "") +
+          "&layer=" +
+          encodeURIComponent(parsed.layer || "");
 
-    return;
-  }
+        return;
+      }
 
-} catch {}
+    } catch {}
 
     addMessage(reply || "No response.", "bot");
 
