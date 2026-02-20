@@ -25,10 +25,7 @@
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   z-index: 9999;
-  transition: 0.3s ease;
 }
-
-#ai-toggle:hover { transform: scale(1.05); }
 
 #ai-chatbox {
   position: fixed;
@@ -54,37 +51,29 @@
   font-weight: bold;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
-
-#ai-close { cursor: pointer; }
 
 #ai-messages {
   flex: 1;
   padding: 12px;
   overflow-y: auto;
   background: #f4f6f9;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .user-message {
   background: #0077ff;
   color: white;
-  padding: 10px 14px;
+  padding: 10px;
   border-radius: 14px;
-  max-width: 80%;
-  align-self: flex-end;
+  margin: 5px 0;
+  text-align: right;
 }
 
 .bot-message {
   background: #e4e7ec;
-  color: #333;
-  padding: 10px 14px;
+  padding: 10px;
   border-radius: 14px;
-  max-width: 80%;
-  align-self: flex-start;
+  margin: 5px 0;
 }
 
 #ai-input-area {
@@ -96,14 +85,13 @@
   flex: 1;
   border: none;
   padding: 12px;
-  outline: none;
 }
 
 #ai-send {
   background: #0077ff;
   border: none;
   color: white;
-  padding: 0 18px;
+  padding: 0 15px;
   cursor: pointer;
 }
 
@@ -116,8 +104,8 @@
     <div class="nav-container">
         <a href="index.html" class="logo">ALIGARH GIS</a>
         <nav class="nav-links" id="navLinks">
-            <a href="index.html" class="active">Home</a>
-            <a href="analysis.html">Analysis</a>
+            <a href="index.html">Home</a>
+            <a href="analysis.html" class="active">Analysis</a>
             <a href="lulc-data.html">LULC Data</a>
             <a href="team.html">Team</a>
         </nav>
@@ -167,7 +155,7 @@
   </div>
   <div id="ai-messages"></div>
   <div id="ai-input-area">
-    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI, urban area..." />
+    <input type="text" id="ai-input" placeholder="Ask about LULC or NDVI..." />
     <button id="ai-send">Send</button>
   </div>
 </div>
@@ -178,8 +166,7 @@
 
 AOS.init({ duration: 1000, once: true });
 
-/* ================= HAMBURGER FIX ================= */
-
+// Hamburger fix
 const hamburger = document.getElementById("hamburger");
 const navLinks = document.getElementById("navLinks");
 
@@ -189,8 +176,7 @@ if (hamburger) {
   });
 }
 
-/* ================= CHATBOT ================= */
-
+// Chat system
 const toggle = document.getElementById("ai-toggle");
 const chatbox = document.getElementById("ai-chatbox");
 const closeBtn = document.getElementById("ai-close");
@@ -226,29 +212,7 @@ async function handleSend() {
 
     const data = await response.json();
     messages.lastChild.remove();
-
-    const reply = data.reply;
-
-    try {
-      const parsed = JSON.parse(reply);
-
-      if (parsed.type === "map") {
-
-        addMessage("Opening map for: " + parsed.area, "bot");
-
-        // Prevent infinite redirect if already on analysis page
-        if (!window.location.href.includes("analysis.html")) {
-          window.location.href =
-            "analysis.html?area=" +
-            encodeURIComponent(parsed.area);
-        }
-
-        return;
-      }
-
-    } catch {}
-
-    addMessage(reply || "No response.", "bot");
+    addMessage(data.reply || "No response.", "bot");
 
   } catch {
     messages.lastChild.remove();
