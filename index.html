@@ -7,6 +7,7 @@
 
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="ai-chat.css">
 </head>
 
 <body>
@@ -95,6 +96,18 @@
 <footer>
     &copy; 2026 Aligarh District Mapathon. Developed for academic and analytical submission.
 </footer>
+<!-- AI LULC Assistant -->
+<div id="ai-assistant-container">
+  <button id="ai-toggle">LULC Assistant</button>
+  <div id="ai-chatbox">
+    <div id="ai-header">LULC Assistant</div>
+    <div id="ai-messages"></div>
+    <input type="text" id="ai-input" placeholder="Ask about LULC, NDVI..." />
+  </div>
+</div>
+
+<link rel="stylesheet" href="ai-chat.css">
+<script src="ai-chat.js"></script>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
@@ -164,6 +177,49 @@ loginBtn.addEventListener("click", () => {
     alert("Welcome " + savedUser.name);
     closeModal("loginModal");
 });
+
+const toggle = document.getElementById("ai-toggle");
+const chatbox = document.getElementById("ai-chatbox");
+const input = document.getElementById("ai-input");
+const messages = document.getElementById("ai-messages");
+
+toggle.onclick = () => {
+  chatbox.style.display =
+    chatbox.style.display === "flex" ? "none" : "flex";
+};
+
+function addMessage(text, sender="bot") {
+  const div = document.createElement("div");
+  div.innerHTML = `<strong>${sender === "bot" ? "Assistant" : "You"}:</strong> ${text}`;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function getAIResponse(userMessage) {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ message: userMessage }),
+  });
+
+  const data = await response.json();
+  return data.reply;
+}
+
+input.addEventListener("keypress", async function(e) {
+  if (e.key === "Enter") {
+    const text = input.value;
+    addMessage(text, "user");
+    input.value = "";
+
+    addMessage("Analyzing...", "bot");
+    const reply = await getAIResponse(text);
+
+    messages.lastChild.remove();
+    addMessage(reply, "bot");
+  }
+});
+
 </script>
 
 </body>
